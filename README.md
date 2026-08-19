@@ -1,31 +1,74 @@
 <p align="center">
   <h1 align="center">🏛️ Public Pulse</h1>
   <p align="center">
-    <strong>A civic-tech platform for crowdsourced public problem reporting with AI-powered deduplication and spatial intelligence.</strong>
+    <strong>India's first Public Problem Discovery & Prioritization Platform — turning scattered citizen voices into a clear national agenda.</strong>
   </p>
   <p align="center">
-    <a href="#-getting-started">Getting Started</a> •
+    <a href="#-the-problem">The Problem</a> •
+    <a href="#-the-solution">The Solution</a> •
     <a href="#-tech-stack">Tech Stack</a> •
-    <a href="#-architecture">Architecture</a> •
-    <a href="#-api-reference">API Reference</a> •
+    <a href="#-getting-started">Getting Started</a> •
     <a href="#-contributing">Contributing</a>
   </p>
 </p>
 
 ---
 
-## 📖 Overview
+## 🔴 The Problem
 
-**Public Pulse** is a full-stack civic-tech platform that empowers citizens to report and track public infrastructure issues — from potholes and broken streetlights to water leaks and pollution. It leverages **AI-powered duplicate detection** (via OpenAI embeddings) and **spatial queries** (via PostGIS) to intelligently group similar reports, surface high-priority problems, and help local governments respond faster.
+Every day, millions of Indians voice the same frustrations — bad roads, power cuts, water shortages, controversial bills, policy failures — across WhatsApp groups, Instagram, and Twitter. But these scattered voices never converge into a single, clear picture.
 
-### Key Features
+**The result:**
 
-- 🗺️ **Spatial Intelligence** — Geolocation-based issue reporting with PostGIS-powered proximity queries
-- 🤖 **AI Deduplication** — OpenAI-driven semantic similarity to automatically detect and merge duplicate reports
-- ⚡ **Real-time Caching** — Redis-backed caching layer for lightning-fast response times
-- 🔐 **Secure Authentication** — Supabase Auth integration for user management
-- 📦 **Evidence Storage** — Cloudflare R2 for scalable media/evidence uploads
-- 🩺 **Health Monitoring** — Built-in health checks for all services (database, cache)
+- 🏛️ **Governments** don't know what citizens actually prioritize
+- 👥 **Citizens** don't know if millions of others face the same issue
+- 🤝 **NGOs & Organizations** can't tell which problems affect the most people
+- 📢 **Complaints stay loud but invisible** — no one is listening at scale
+
+> **There is no single platform that answers: _"What are the most important problems people want solved right now?"_**
+
+---
+
+## 💡 The Solution
+
+**Public Pulse** is a **Public Problem Discovery & Prioritization Platform** — a place where:
+
+1. **Citizens report real problems** — from local potholes to national-level issues like parliamentary bills, policy changes, and systemic failures
+2. **Communities validate and vote** — upvote issues that affect them, adding weight and legitimacy
+3. **A transparent ranking emerges** — showing what matters most, right now, at every level
+
+### What Makes This Different?
+
+This is **not** just another complaint box or civic grievance portal. Public Pulse captures the **pulse of the nation** across every scale:
+
+| Scope | Example Issues |
+|-------|---------------|
+| 🏘️ **Local** | Broken roads, water supply disruptions, garbage collection failures |
+| 🏙️ **City-wide** | Public transport gaps, pollution spikes, housing shortages |
+| 🗺️ **State-level** | Power grid failures, education policy, healthcare access |
+| 🇮🇳 **National** | Parliamentary bills, economic policy, constitutional amendments, national security |
+
+### Core Features
+
+- 📝 **Problem Reporting** — Citizens submit issues with evidence (photos, documents, links) across any category and scale
+- 🗳️ **Community Voting & Validation** — Upvote, discuss, and validate issues to surface what truly matters
+- 📊 **Live Priority Rankings** — Transparent, real-time leaderboard of issues ranked by public urgency
+- 🤖 **AI-Powered Deduplication** — Automatically detects and merges duplicate reports using semantic similarity
+- 🗺️ **Spatial Intelligence** — Geolocation-powered clustering to identify regional problem hotspots
+- 📈 **Trend Detection** — Track how issues gain or lose public attention over time
+- 🔐 **Verified Identities** — Authenticated users for credible, accountable participation
+
+---
+
+## 🎯 Who Is This For?
+
+| Stakeholder | Value |
+|-------------|-------|
+| **Citizens** | Finally see if your problem is shared by thousands — and push it up the priority ladder |
+| **Government Bodies** | Data-driven insight into what citizens actually care about — no more guesswork |
+| **NGOs & Activists** | Identify high-impact issues to rally behind with real community backing |
+| **Media & Journalists** | Discover emerging public concerns before they become headlines |
+| **Researchers** | Access structured, crowd-validated data on public sentiment and priorities |
 
 ---
 
@@ -37,9 +80,9 @@
 | **Backend**  | [FastAPI](https://fastapi.tiangolo.com/) · Python 3.11+ · Pydantic v2     |
 | **Database** | PostgreSQL 15 + [pgvector](https://github.com/pgvector/pgvector) + PostGIS |
 | **Cache**    | Redis 7                                                                    |
-| **AI**       | OpenAI API (embeddings & semantic search)                                  |
+| **AI**       | OpenAI API (embeddings for duplicate detection & semantic search)           |
 | **Auth**     | Supabase Auth                                                              |
-| **Storage**  | Cloudflare R2                                                              |
+| **Storage**  | Cloudflare R2 (evidence uploads)                                           |
 | **DevOps**   | Docker Compose · Concurrently                                              |
 
 ---
@@ -48,7 +91,8 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Client (Browser)                     │
+│                     Citizens (Browser)                      │
+│          Report · Vote · Discover · Track Issues            │
 └──────────────────────────┬──────────────────────────────────┘
                            │
               ┌────────────▼────────────┐
@@ -58,13 +102,14 @@
                            │  REST API
               ┌────────────▼────────────┐
               │   FastAPI Backend       │
+              │   AI Dedup · Ranking    │
               │   (localhost:8000)       │
               └──┬──────────────────┬───┘
                  │                  │
      ┌───────────▼───┐    ┌───────▼────────┐
      │  PostgreSQL   │    │     Redis      │
-     │  + pgvector   │    │   (Cache)      │
-     │  + PostGIS    │    │                │
+     │  + pgvector   │    │  (Rankings &   │
+     │  + PostGIS    │    │   Caching)     │
      └───────────────┘    └────────────────┘
 ```
 
@@ -91,15 +136,13 @@ Public Pulse/
 │   │   │   └── health.py      # Health check endpoint
 │   │   └── main.py            # FastAPI app entrypoint
 │   ├── tests/                 # Backend test suite
-│   │   └── test_main.py
 │   ├── requirements.txt       # Python dependencies
-│   └── pyproject.toml         # Black & Ruff config
+│   └── pyproject.toml         # Linter config (Black & Ruff)
 │
 ├── docker-compose.yml         # PostgreSQL + Redis services
-├── package.json               # Monorepo scripts (concurrently)
+├── package.json               # Monorepo scripts
 ├── .env.example               # Environment variable template
-├── .gitignore
-└── .prettierrc
+└── .gitignore
 ```
 
 ---
@@ -110,7 +153,7 @@ Public Pulse/
 
 - **Node.js** 18+ & npm
 - **Python** 3.11+
-- **Docker** & Docker Compose (for PostgreSQL + Redis)
+- **Docker** & Docker Compose
 - **Git**
 
 ### 1. Clone the Repository
@@ -126,13 +169,13 @@ cd Public-Pulse
 cp .env.example .env
 ```
 
-Edit `.env` and fill in your actual credentials:
+Edit `.env` and configure your credentials:
 
 | Variable                    | Description                         |
 | --------------------------- | ----------------------------------- |
 | `DATABASE_URL`              | PostgreSQL connection string        |
 | `REDIS_URL`                 | Redis connection string             |
-| `OPENAI_API_KEY`            | Your OpenAI API key                 |
+| `OPENAI_API_KEY`            | OpenAI API key (for AI dedup)       |
 | `SUPABASE_URL`              | Supabase project URL                |
 | `SUPABASE_ANON_KEY`         | Supabase anonymous key              |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key           |
@@ -141,29 +184,21 @@ Edit `.env` and fill in your actual credentials:
 | `CF_R2_BUCKET_NAME`         | R2 bucket name for evidence storage |
 | `CF_R2_ENDPOINT`            | R2 endpoint URL                     |
 
-### 3. Start Infrastructure (PostgreSQL + Redis)
+### 3. Start Infrastructure
 
 ```bash
 npm run db:up
-# or
-docker-compose up -d
 ```
 
 ### 4. Install Dependencies
 
 ```bash
-# Install all dependencies (frontend + backend)
 npm run install:all
-
-# Or install separately:
-npm install --prefix frontend        # Frontend
-pip install -r backend/requirements.txt  # Backend
 ```
 
 ### 5. Start Development Servers
 
 ```bash
-# Start both frontend & backend concurrently
 npm run dev
 ```
 
@@ -172,84 +207,50 @@ npm run dev
 | Frontend     | [http://localhost:3000](http://localhost:3000)          |
 | Backend API  | [http://localhost:8000](http://localhost:8000)          |
 | API Docs     | [http://localhost:8000/docs](http://localhost:8000/docs) |
-| ReDoc        | [http://localhost:8000/redoc](http://localhost:8000/redoc) |
 
 ---
 
-## 📡 API Reference
+## 🧰 Available Scripts
 
-### Root
-
-```
-GET /
-```
-
-Returns API status and version info.
-
-### Health Check
-
-```
-GET /health
-```
-
-Returns the health status of all dependent services:
-
-```json
-{
-  "status": "healthy",
-  "services": {
-    "database": "online",
-    "redis": "online"
-  }
-}
-```
-
-> Full interactive API documentation is available at `/docs` (Swagger UI) or `/redoc` in development mode.
+| Script               | Description                              |
+| -------------------- | ---------------------------------------- |
+| `npm run dev`        | Start frontend + backend concurrently    |
+| `npm run dev:frontend` | Start Next.js dev server (port 3000)   |
+| `npm run dev:backend`  | Start FastAPI dev server (port 8000)   |
+| `npm run db:up`      | Start PostgreSQL + Redis containers      |
+| `npm run db:down`    | Stop and remove containers               |
+| `npm run install:all`| Install all frontend + backend deps      |
 
 ---
 
 ## 🧪 Running Tests
 
 ```bash
-# Backend tests
-cd backend
-pytest
+# Backend
+cd backend && pytest
 
-# Frontend lint
-cd frontend
-npm run lint
+# Frontend
+cd frontend && npm run lint
 ```
 
 ---
 
-## 🐳 Docker Services
+## 🗺️ Roadmap
 
-The `docker-compose.yml` provisions the following services:
-
-| Service      | Image                    | Port   | Description                           |
-| ------------ | ------------------------ | ------ | ------------------------------------- |
-| **db**       | `ankane/pgvector:15-postgis` | `5432` | PostgreSQL 15 with pgvector & PostGIS |
-| **redis**    | `redis:7-alpine`         | `6379` | Redis 7 for caching                  |
-
-Both services include health checks and persistent volumes (`pgdata`, `redisdata`).
-
-```bash
-npm run db:up    # Start services
-npm run db:down  # Stop services
-```
-
----
-
-## 🧰 Available Scripts
-
-| Script           | Command                        | Description                              |
-| ---------------- | ------------------------------ | ---------------------------------------- |
-| `npm run dev`    | Starts frontend + backend      | Runs both servers concurrently           |
-| `npm run dev:frontend` | `next dev`               | Starts Next.js dev server on port 3000   |
-| `npm run dev:backend`  | `uvicorn`                | Starts FastAPI dev server on port 8000   |
-| `npm run db:up`  | `docker-compose up -d`         | Starts PostgreSQL + Redis containers     |
-| `npm run db:down`| `docker-compose down`          | Stops and removes containers             |
-| `npm run install:all` | Installs all deps         | Frontend npm + backend pip               |
+- [x] Project scaffolding & monorepo setup
+- [x] Backend API with FastAPI + health checks
+- [x] Database infrastructure (PostgreSQL + pgvector + PostGIS)
+- [x] Redis caching layer
+- [ ] Problem submission & categorization system
+- [ ] Community voting & validation engine
+- [ ] Live priority ranking algorithm
+- [ ] AI-powered duplicate detection pipeline
+- [ ] Geospatial hotspot mapping
+- [ ] Trend tracking & analytics dashboard
+- [ ] User authentication & profiles
+- [ ] Evidence upload system (photos, documents)
+- [ ] National vs. local issue filtering
+- [ ] Public API for NGOs & researchers
 
 ---
 
@@ -270,5 +271,7 @@ This project is open source. See the [LICENSE](LICENSE) file for details.
 ---
 
 <p align="center">
+  <strong>🇮🇳 Built to amplify the voice of every citizen.</strong>
+  <br/>
   Built with ❤️ by <a href="https://github.com/Charukesh-pyla">Charukesh Pyla</a>
 </p>
