@@ -1,0 +1,25 @@
+[tool.black]
+line-length = 100
+target-version = ['py311']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.mypy_cache
+  | \.ruff_cache
+  | venv
+  | env
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# Select rules: Pyflakes (F), Pycodestyle (E, W), Isort (I), Pep8-naming (N)
+select = ["E", "F", "W", "I", "N"]
+ignore = []
+
+[tool.ruff.isort]
+known-first-party = ["backend"]
