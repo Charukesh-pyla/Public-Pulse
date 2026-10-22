@@ -1,2 +1,5 @@
-# Routers package initialization
-from backend.app.routers.health import router as health_router
+# Routers package
+from backend.app.routers import health
+from backend.app.routers import problems
+from backend.app.routers import votes
+from backend.app.routers import categories

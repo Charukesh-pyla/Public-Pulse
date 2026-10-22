@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.app.core.config import settings
 from backend.app.routers import health
+from backend.app.routers import problems
+from backend.app.routers import votes
+from backend.app.routers import categories
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -22,6 +25,9 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health.router)
+app.include_router(problems.router)
+app.include_router(votes.router)
+app.include_router(categories.router)
 
 @app.get("/")
 async def root():
